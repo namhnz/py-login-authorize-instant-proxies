@@ -57,7 +57,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV 'E:\Documents\PYS_PROJ\py-login-authorize-instant-proxies'
+set -gx VIRTUAL_ENV 'D:\User Data\Documents\PYS_PROJ\py-login-authorize-instant-proxies'
 
 # https://github.com/fish-shell/fish-shell/issues/436 altered PATH handling
 if test (echo $FISH_VERSION | head -c 1) -lt 3

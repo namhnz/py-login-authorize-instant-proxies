@@ -1,77 +1,49 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from time import sleep
-from random import randrange
+from ntpath import join
+from services.current_machine_ip import getIp;
+from linqit import List;
+from services.instant_proxies_service import *;
+from services.data_text_file_service import *;
+from datetime import datetime, timedelta
 
-s = Service(ChromeDriverManager().install())
-op = webdriver.ChromeOptions()
-op.add_argument(r"start-maximized")
-op.add_experimental_option("detach", True)
-driver = webdriver.Chrome(service=s, options=op)
-driver.maximize_window()
+# Lay dia chi IP cua may tinh hien tai
+currentMachineIp = getIp();
 
-# Dang nhap vao InstantProxies
-driver.get(r"http://admin.instantproxies.com/login.php")
-sleep(randrange(5))
+# Kiem tra xem dia chi IP dang su dung co nam trong danh sach ip duoc cho phep da luu truoc do khong
+authedIpList = ReadAuthedIpListFromDataTextFile();
+if authedIpList != None and authedIpList.contains(currentMachineIp):
+    # Neu dia chi IP hien tai cua may da co trong danh sach duoc cho phep
+    pass;
+else:
+    # Neu dia chi IP chua them vao danh sach cho phep thi tien hanh vao trang InstantProxies de them
+    SignInInstantProxies();
+    # Trang InstantProxies tu dong phat hien dia chi IP dang su dung nen khong can truyen vao dia chi IP cua may hien tai
+    newAuthedIpList = AddMachineIpToWebAuthedIpList();
+    WriteAuthedIpListToDataTextFile(newAuthedIpList);
+    SignOutInstantProxies();
+    
 
-userIdValue = ""
-passwordValue = ""
+# Kiem tra danh sach proxy da luu proxy nao hay chua
+forCrawlDataProxyList = List();
+proxyListData = ReadProvidedProxyListFromDataTextFile();
+if proxyListData != None:
+    writeTime, proxyListCount, providedProxyList = proxyListData;
+    # Neu thoi gian luu file proxy den hien tai qua 24 gio thi vao web InstantProxies de lay danh sach proxy moi: https://stackoverflow.com/a/26313848/7182661
+    if (datetime.now() - writeTime) < timedelta(hours=24): 
+        # less than 24 hours passed
+        forCrawlDataProxyList = providedProxyList;
+    else:
+        # Lam moi danh sach proxy tu web InstantProxies
+        SignInInstantProxies();
+        newProvidedProxyList = GetProxyListOnWeb();
+        WriteProvidedProxyListToDataTextFile(newProvidedProxyList);
+        SignOutInstantProxies();
+        forCrawlDataProxyList = newProvidedProxyList;
+else:
+    # Lam moi danh sach proxy tu web InstantProxies
+    SignInInstantProxies();
+    newProvidedProxyList = GetProxyListOnWeb();
+    WriteProvidedProxyListToDataTextFile(newProvidedProxyList);
+    SignOutInstantProxies();
+    forCrawlDataProxyList = newProvidedProxyList;
 
-with open("credential.txt", "r") as cre:
-    userIdValue = cre.readline().strip()
-    passwordValue = cre.readline().strip()
-
-userIdInput = driver.find_element(By.ID, "user")
-userIdInput.send_keys(userIdValue)
-print("Da nhap xong user id")
-sleep(1)
-
-passwordInput = driver.find_element(By.ID, "password")
-passwordInput.send_keys(passwordValue)
-print("Da nhap xong password")
-sleep(1)
-
-signInButton = driver.find_element(By.ID, r'x')
-signInButton.click()
-print("Da nhan nut sign in")
-sleep(randrange(5))
-
-# Thuc hien chuc nang them ip vao danh sach cho phep
-addAuthIpA = driver.find_element(By.ID, r"addauthip-link")
-addAuthIpA.click()
-print("Da them IP hien tai vao danh sach cho phep")
-sleep(randrange(2, 5))
-
-# Thuc hien chuc nang cap nhanh danh sach ip cho phep moi
-
-
-def SubmitNewAuthedIpList():
-    submitNewIpListButton = driver.find_element(
-        By.XPATH, r'//*[@id="top_container"]/div[3]/div/div/table/tbody/tr/td[3]/form/div/input')
-    submitNewIpListButton.click()
-    print("Da cap nhat danh sach IP cho phep moi")
-    sleep(randrange(5))
-
-
-# Kiem tra ip hien tai da co trong danh sach cho phep chua
-authedIpListString = driver.find_element(
-    By.ID, r"authips-textarea").get_attribute("value")
-print("Danh sach IP da duoc cho phep: " + authedIpListString)
-authedIpList = str(authedIpListString).splitlines()
-dupplicateAuthedIpList = set(
-    [ip for ip in authedIpList if authedIpList.count(ip) > 1])
-# Neu khong co dia chi ip trung thi ip do chua duoc them vao truoc day
-if not len(dupplicateAuthedIpList):
-    SubmitNewAuthedIpList()
-
-# Dang xuat va thoat driver
-signOutButton = driver.find_element(
-    By.XPATH, r'//*[@id="top_container"]/div[3]/div/div/div/div[2]/input')
-signOutButton.click()
-print("Hoan thanh them dia chi ip hien tai vao danh sach cho phep")
-sleep(1)
-driver.close()
-print("Da thoat trinh duyet")
+print("Danh sach proxy duoc su dung de crawl du lieu: " + " ".join(forCrawlDataProxyList));

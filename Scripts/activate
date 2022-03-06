@@ -44,7 +44,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV='E:\Documents\PYS_PROJ\py-login-authorize-instant-proxies'
+VIRTUAL_ENV='D:\User Data\Documents\PYS_PROJ\py-login-authorize-instant-proxies'
 if ([ "$OSTYPE" = "cygwin" ] || [ "$OSTYPE" = "msys" ]) && $(command -v cygpath &> /dev/null) ; then
     VIRTUAL_ENV=$(cygpath -u "$VIRTUAL_ENV")
 fi

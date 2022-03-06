@@ -1,6 +1,6 @@
 @echo off
 
-set "VIRTUAL_ENV=E:\Documents\PYS_PROJ\py-login-authorize-instant-proxies"
+set "VIRTUAL_ENV=D:\User Data\Documents\PYS_PROJ\py-login-authorize-instant-proxies"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"

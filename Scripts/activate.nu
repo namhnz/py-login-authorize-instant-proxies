@@ -1,6 +1,6 @@
 # Setting all environment variables for the venv
 let path-name = (if ((sys).host.name == "Windows") { "Path" } { "PATH" })
-let virtual-env = "E:\Documents\PYS_PROJ\py-login-authorize-instant-proxies"
+let virtual-env = "D:\User Data\Documents\PYS_PROJ\py-login-authorize-instant-proxies"
 let bin = "Scripts"
 let path-sep = ";"
 
@@ -38,4 +38,4 @@ let-env PROMPT_COMMAND = $new_prompt
 # We are using alias as the function definitions because only aliases can be
 # removed from the scope
 alias pydoc = python -m pydoc
-alias deactivate = source "E:\Documents\PYS_PROJ\py-login-authorize-instant-proxies\Scripts\deactivate.nu"
+alias deactivate = source "D:\User Data\Documents\PYS_PROJ\py-login-authorize-instant-proxies\Scripts\deactivate.nu"
