@@ -44,7 +44,7 @@ class InstantProxiesDataFileService:
             print("Da tao thu muc chua danh sach proxy duoc cung cap")
 
         now = datetime.now()  # current date and time
-        nowString = now.strftime(dateTimeFormatStyle)
+        nowString = now.strftime(data_file_constants.PROVIDED_PROXIES_DATA_FILE_DATE_TIME_FORMAT_STYLE)
         proxiesCount = len(providedProxies)
         print("Tong so proxy duoc cung cap: " + str(proxiesCount))
 
@@ -66,7 +66,7 @@ class InstantProxiesDataFileService:
                     print("Da doc xong danh sach proxy duoc cung cap vao file")
                     return None
                 else:
-                    writeTime = datetime.strptime(
+                    wroteTime = datetime.strptime(
                         wroteTimeString, data_file_constants.PROVIDED_PROXIES_DATA_FILE_DATE_TIME_FORMAT_STYLE)
                     proxyListCount = int(
                         providedProxiesDataFile.readline().rstrip())
@@ -74,7 +74,7 @@ class InstantProxiesDataFileService:
                         lambda _: providedProxiesDataFile.readline().rstrip())
 
                     print("Da doc xong danh sach proxy duoc cung cap vao file")
-                    return writeTime, proxyListCount, providedProxyList
+                    return wroteTime, proxyListCount, providedProxyList
         else:
             print("Khong co proxy duoc cung cap nao da duoc luu truoc do")
             return None
